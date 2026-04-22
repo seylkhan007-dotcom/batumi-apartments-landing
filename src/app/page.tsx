@@ -1,4 +1,6 @@
 import type {Metadata} from 'next'
+import {existsSync} from 'node:fs'
+import {join} from 'node:path'
 import {FadeIn} from '@/components/common/fade-in'
 import {FloatingWhatsAppButton} from '@/components/floating-whatsapp-button'
 import {AdvantagesSection} from '@/sections/advantages-section'
@@ -31,6 +33,12 @@ import {
 type HomePageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
+
+const siteUrl = 'https://nestroapartments.com'
+const fallbackOgImagePath = '/og-image.png'
+const hasFallbackOgImage = existsSync(
+  join(process.cwd(), 'public', 'og-image.png')
+)
 
 function getWhatsAppLink(phone?: string) {
   if (!phone) return '#'
@@ -169,12 +177,12 @@ function getFallbackTexts(language: Language) {
       contactsSectionButtonWhatsapp: 'WhatsApp',
       contactsSectionButtonTelegram: 'Telegram',
       heroFallbackImage: 'Apartment image will appear here',
-      seoTitle: 'NESTRO Living Group — comfortable and secure stay in Batumi',
+      seoTitle: 'NESTRO Apartments — apartments in Batumi',
       seoDescription:
-        'Stylish apartments in Batumi with direct communication, clear service and reliable support. Book directly with NESTRO Living Group.',
-      ogTitle: 'NESTRO Living Group — apartments in Batumi',
+        'Apartments in Batumi near the sea and city center. Studios and 1-bedroom apartments for short-term and long-term stays, easy check-in and guest support.',
+      ogTitle: 'NESTRO Apartments — apartments in Batumi',
       ogDescription:
-        'Comfortable stay in Batumi with direct booking, clear communication and a well-organized hospitality experience.',
+        'Apartments in Batumi near the sea and city center. Studios and 1-bedroom apartments for short-term and long-term stays, easy check-in and guest support.',
       finalCtaBadge: 'Direct booking',
       finalCtaTitle: 'Ready to choose your apartment in Batumi?',
       finalCtaDescription:
@@ -228,12 +236,12 @@ function getFallbackTexts(language: Language) {
     contactsSectionButtonWhatsapp: 'WhatsApp',
     contactsSectionButtonTelegram: 'Telegram',
     heroFallbackImage: 'Фото апартаментов появится здесь',
-    seoTitle: 'NESTRO Living Group — комфортное и безопасное проживание в Батуми',
+    seoTitle: 'NESTRO Apartments — апартаменты в Батуми',
     seoDescription:
-      'Стильные апартаменты в Батуми с прямой связью, понятным сервисом и надёжной поддержкой. Прямое бронирование через NESTRO Living Group.',
-    ogTitle: 'NESTRO Living Group — апартаменты в Батуми',
+      'Апартаменты в Батуми у моря и в центре. Студии и 1+1 для краткосрочного и долгосрочного проживания, удобное заселение и поддержка гостей.',
+    ogTitle: 'NESTRO Apartments — апартаменты в Батуми',
     ogDescription:
-      'Комфортное проживание в Батуми, прямое бронирование, понятная коммуникация и аккуратно организованный сервис.',
+      'Апартаменты в Батуми у моря и в центре. Студии и 1+1 для краткосрочного и долгосрочного проживания, удобное заселение и поддержка гостей.',
     finalCtaBadge: 'Прямое бронирование',
     finalCtaTitle: 'Готовы выбрать апартаменты в Батуми?',
     finalCtaDescription:
@@ -254,28 +262,57 @@ export async function generateMetadata({
   const seoSettings = await getSeoSettings()
 
   const title = seoSettings
-    ? getLocalizedValue(seoSettings.metaTitle, language)
+    ? getLocalizedValue(seoSettings.metaTitle, language) || fallback.seoTitle
     : fallback.seoTitle
 
   const description = seoSettings
-    ? getLocalizedValue(seoSettings.metaDescription, language)
+    ? getLocalizedValue(seoSettings.metaDescription, language) ||
+      fallback.seoDescription
     : fallback.seoDescription
 
   const ogTitle = seoSettings
-    ? getLocalizedValue(seoSettings.ogTitle, language)
+    ? getLocalizedValue(seoSettings.ogTitle, language) || fallback.ogTitle
     : fallback.ogTitle
 
   const ogDescription = seoSettings
-    ? getLocalizedValue(seoSettings.ogDescription, language)
+    ? getLocalizedValue(seoSettings.ogDescription, language) ||
+      fallback.ogDescription
     : fallback.ogDescription
+  const ogImages = seoSettings?.ogImageUrl
+    ? [seoSettings.ogImageUrl]
+    : hasFallbackOgImage
+      ? [fallbackOgImagePath]
+      : []
 
   return {
+    metadataBase: new URL(siteUrl),
     title,
     description,
+    alternates: {
+      canonical: language === 'en' ? '/?lang=en' : '/?lang=ru',
+      languages: {
+        ru: '/?lang=ru',
+        en: '/?lang=en',
+      },
+    },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
-      images: seoSettings?.ogImageUrl ? [seoSettings.ogImageUrl] : [],
+      url: language === 'en' ? '/?lang=en' : '/?lang=ru',
+      siteName: 'NESTRO Apartments',
+      locale: language === 'en' ? 'en_US' : 'ru_RU',
+      type: 'website',
+      images: ogImages,
+    },
+    twitter: {
+      card: ogImages.length > 0 ? 'summary_large_image' : 'summary',
+      title: ogTitle,
+      description: ogDescription,
+      images: ogImages,
+    },
+    icons: {
+      icon: '/favicon.ico',
+      shortcut: '/favicon.ico',
     },
   }
 }
