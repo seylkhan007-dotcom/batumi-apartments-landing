@@ -6,7 +6,9 @@ import {ContactsSection} from '@/sections/contacts-section'
 import {FinalCtaSection} from '@/sections/final-cta-section'
 import {FooterSection} from '@/sections/footer-section'
 import {HeroSection} from '@/sections/hero-section'
+import {LocationSection} from '@/sections/location-section'
 import {ReviewsSection} from '@/sections/reviews-section'
+import {ServiceSection} from '@/sections/service-section'
 import {
   getAdvantages,
   getApartments,
@@ -453,6 +455,14 @@ export default async function HomePage({searchParams}: HomePageProps) {
           apartments={mappedApartments}
           language={language}
         />
+      </FadeIn>
+
+      <FadeIn>
+        <ServiceSection language={language} />
+      </FadeIn>
+
+      <FadeIn>
+        <LocationSection language={language} />
       </FadeIn>
 
       <FadeIn>
