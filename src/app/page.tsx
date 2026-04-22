@@ -8,7 +8,9 @@ import {ContactsSection} from '@/sections/contacts-section'
 import {FinalCtaSection} from '@/sections/final-cta-section'
 import {FooterSection} from '@/sections/footer-section'
 import {HeroSection} from '@/sections/hero-section'
+import {InstagramSection} from '@/sections/instagram-section'
 import {LocationSection} from '@/sections/location-section'
+import {PartnersSection} from '@/sections/partners-section'
 import {ReviewsSection} from '@/sections/reviews-section'
 import {ServiceSection} from '@/sections/service-section'
 import {
@@ -325,6 +327,15 @@ export default async function HomePage({searchParams}: HomePageProps) {
     bookingUrl: apartment.bookingUrl,
   }))
 
+  const instagramImageUrls = Array.from(
+    new Set(
+      apartments.flatMap((apartment) => [
+        apartment.coverImageUrl,
+        ...(apartment.galleryUrls ?? []),
+      ])
+    )
+  ).filter((imageUrl): imageUrl is string => Boolean(imageUrl))
+
   const mappedReviews = reviews.map((review) => ({
     _id: review._id,
     guestName: review.guestName,
@@ -478,6 +489,18 @@ export default async function HomePage({searchParams}: HomePageProps) {
 
       <FadeIn>
         <BookingSection language={language} />
+      </FadeIn>
+
+      <FadeIn>
+        <InstagramSection
+          imageUrls={instagramImageUrls}
+          instagramUrl={contacts?.instagram}
+          language={language}
+        />
+      </FadeIn>
+
+      <FadeIn>
+        <PartnersSection language={language} />
       </FadeIn>
 
       <FadeIn>
