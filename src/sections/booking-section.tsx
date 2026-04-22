@@ -2,6 +2,8 @@ import type {Language} from '@/utils/localization'
 
 type BookingSectionProps = {
   language: Language
+  whatsappPhone?: string
+  whatsappMessage?: string
 }
 
 const whatsappBaseUrl = 'https://wa.me/995558209739'
@@ -66,10 +68,15 @@ function getBookingContent(language: Language) {
   }
 }
 
-export function BookingSection({language}: BookingSectionProps) {
+export function BookingSection({
+  language,
+  whatsappPhone,
+  whatsappMessage,
+}: BookingSectionProps) {
   const content = getBookingContent(language)
-  const whatsappUrl = `${whatsappBaseUrl}?text=${encodeURIComponent(
-    content.whatsappText
+  const normalizedPhone = whatsappPhone?.replace(/[^\d]/g, '')
+  const whatsappUrl = `${normalizedPhone ? `https://wa.me/${normalizedPhone}` : whatsappBaseUrl}?text=${encodeURIComponent(
+    whatsappMessage || content.whatsappText
   )}`
 
   return (

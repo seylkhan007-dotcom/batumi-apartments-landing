@@ -2,6 +2,8 @@ import type {Language} from '@/utils/localization'
 
 type FloatingWhatsAppButtonProps = {
   language: Language
+  whatsappPhone?: string
+  whatsappMessage?: string
 }
 
 const whatsappBaseUrl = 'https://wa.me/995558209739'
@@ -14,9 +16,12 @@ function getWhatsAppText(language: Language) {
 
 export function FloatingWhatsAppButton({
   language,
+  whatsappPhone,
+  whatsappMessage,
 }: FloatingWhatsAppButtonProps) {
-  const whatsappUrl = `${whatsappBaseUrl}?text=${encodeURIComponent(
-    getWhatsAppText(language)
+  const normalizedPhone = whatsappPhone?.replace(/[^\d]/g, '')
+  const whatsappUrl = `${normalizedPhone ? `https://wa.me/${normalizedPhone}` : whatsappBaseUrl}?text=${encodeURIComponent(
+    whatsappMessage || getWhatsAppText(language)
   )}`
 
   return (

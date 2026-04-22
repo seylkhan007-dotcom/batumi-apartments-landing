@@ -58,6 +58,55 @@ export const contactsQuery = `
   }
 `
 
+export const siteSettingsQuery = `
+  *[_type == "siteSettings"][0] {
+    _id,
+    brandName,
+    brandSubtitle,
+    phone,
+    whatsapp,
+    telegram,
+    instagram,
+    email,
+    address,
+    workingHours,
+    defaultWhatsappMessageGuest,
+    defaultWhatsappMessageOwner
+  }
+`
+
+export const navigationQuery = `
+  coalesce(
+    *[_type == "navigation" && title == "Главное меню"][0],
+    *[_type == "navigation"][0]
+  ) {
+    _id,
+    title,
+    "items": items[isVisible != false] | order(order asc) {
+      label,
+      href,
+      order,
+      isVisible
+    }
+  }
+`
+
+export const footerSettingsQuery = `
+  *[_type == "footerSettings"][0] {
+    _id,
+    description,
+    copyrightText,
+    showDeveloperCredit,
+    developerCreditText,
+    "quickLinks": quickLinks[isVisible != false] | order(order asc) {
+      label,
+      href,
+      order,
+      isVisible
+    }
+  }
+`
+
 export const homepageQuery = `
   *[_type == "homepageSettings"][0] {
     _id,

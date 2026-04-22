@@ -2,6 +2,8 @@ import type {Language} from '@/utils/localization'
 
 type PartnersSectionProps = {
   language: Language
+  whatsappPhone?: string
+  whatsappMessage?: string
 }
 
 const whatsappBaseUrl = 'https://wa.me/995558209739'
@@ -32,10 +34,15 @@ function getPartnersContent(language: Language) {
   }
 }
 
-export function PartnersSection({language}: PartnersSectionProps) {
+export function PartnersSection({
+  language,
+  whatsappPhone,
+  whatsappMessage,
+}: PartnersSectionProps) {
   const content = getPartnersContent(language)
-  const whatsappUrl = `${whatsappBaseUrl}?text=${encodeURIComponent(
-    content.whatsappText
+  const normalizedPhone = whatsappPhone?.replace(/[^\d]/g, '')
+  const whatsappUrl = `${normalizedPhone ? `https://wa.me/${normalizedPhone}` : whatsappBaseUrl}?text=${encodeURIComponent(
+    whatsappMessage || content.whatsappText
   )}`
 
   return (

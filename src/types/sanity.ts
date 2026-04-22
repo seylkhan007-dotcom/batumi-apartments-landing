@@ -60,6 +60,50 @@ export type Contact = {
   workingHours: LocalizedString
 }
 
+export type SiteSettings = {
+  _id: string
+  brandName?: string
+  brandSubtitle?: string
+  phone?: string
+  whatsapp?: string
+  telegram?: string
+  instagram?: string
+  email?: string
+  address?: LocalizedString
+  workingHours?: LocalizedString
+  defaultWhatsappMessageGuest?: LocalizedText
+  defaultWhatsappMessageOwner?: LocalizedText
+}
+
+export type NavigationItem = {
+  label?: LocalizedString
+  href?: string
+  order?: number
+  isVisible?: boolean
+}
+
+export type Navigation = {
+  _id: string
+  title?: string
+  items?: NavigationItem[]
+}
+
+export type FooterQuickLink = {
+  label?: LocalizedString
+  href?: string
+  order?: number
+  isVisible?: boolean
+}
+
+export type FooterSettings = {
+  _id: string
+  description?: LocalizedText
+  copyrightText?: LocalizedString
+  showDeveloperCredit?: boolean
+  developerCreditText?: string
+  quickLinks?: FooterQuickLink[]
+}
+
 export type HomepageSettings = {
   _id: string
   navigationAdvantages: LocalizedString

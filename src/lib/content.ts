@@ -4,6 +4,9 @@ import {
   advantagesQuery,
   reviewsQuery,
   contactsQuery,
+  siteSettingsQuery,
+  navigationQuery,
+  footerSettingsQuery,
   homepageQuery,
   seoQuery,
 } from './queries'
@@ -12,6 +15,9 @@ import type {
   Advantage,
   Review,
   Contact,
+  SiteSettings,
+  Navigation,
+  FooterSettings,
   HomepageSettings,
   SeoSettings,
 } from '@/types/sanity'
@@ -30,6 +36,18 @@ export async function getReviews(): Promise<Review[]> {
 
 export async function getContacts(): Promise<Contact | null> {
   return client.fetch<Contact | null>(contactsQuery)
+}
+
+export async function getSiteSettings(): Promise<SiteSettings | null> {
+  return client.fetch<SiteSettings | null>(siteSettingsQuery)
+}
+
+export async function getNavigation(): Promise<Navigation | null> {
+  return client.fetch<Navigation | null>(navigationQuery)
+}
+
+export async function getFooterSettings(): Promise<FooterSettings | null> {
+  return client.fetch<FooterSettings | null>(footerSettingsQuery)
 }
 
 export async function getHomepageSettings(): Promise<HomepageSettings | null> {

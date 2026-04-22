@@ -6,6 +6,11 @@ type HeroSectionProps = {
   navApartments: string
   navReviews: string
   navContacts: string
+  navigationItems?: Array<{href: string; label: string}>
+  brandTitle?: string
+  brandSubtitle?: string
+  whatsappPhone?: string
+  whatsappMessage?: string
   heroImageUrl?: string
   heroImageAlt: string
   heroFallbackImage: string
@@ -94,16 +99,35 @@ function getHeroContent(language: Language) {
 }
 
 export function HeroSection({
+  navAdvantages,
+  navApartments,
+  navReviews,
+  navContacts,
   heroImageUrl,
   heroImageAlt,
   heroFallbackImage,
   languageSwitcher,
   language,
+  navigationItems,
+  brandTitle = 'NESTRO',
+  brandSubtitle = 'Living Group',
+  whatsappPhone,
+  whatsappMessage,
 }: HeroSectionProps) {
   const content = getHeroContent(language)
-  const whatsappLink = `${whatsappBaseUrl}?text=${encodeURIComponent(
-    content.whatsappText
+  const normalizedPhone = whatsappPhone?.replace(/[^\d]/g, '')
+  const whatsappLink = `${normalizedPhone ? `https://wa.me/${normalizedPhone}` : whatsappBaseUrl}?text=${encodeURIComponent(
+    whatsappMessage || content.whatsappText
   )}`
+  const fallbackNavigation = [
+    {href: '#advantages', label: navAdvantages},
+    {href: '#apartments', label: navApartments},
+    {href: '#reviews', label: navReviews},
+    {href: '#contacts', label: navContacts},
+  ]
+  const headerNavigation = navigationItems?.length
+    ? navigationItems
+    : fallbackNavigation
 
   return (
     <section className="relative overflow-hidden bg-[#F6F3EF]">
@@ -115,16 +139,16 @@ export function HeroSection({
             <div className="flex min-w-0 shrink-0 items-center">
               <a href="#top" className="shrink-0">
                 <p className="text-base font-semibold tracking-[0.14em] text-[#1F1F1F] sm:text-xl sm:tracking-[0.22em] lg:text-[1.35rem]">
-                  NESTRO
+                  {brandTitle}
                 </p>
                 <p className="mt-0.5 text-[7px] uppercase tracking-[0.24em] text-[#8A7A67] sm:text-[9px] sm:tracking-[0.4em]">
-                  Living Group
+                  {brandSubtitle}
                 </p>
               </a>
             </div>
 
             <nav className="ml-5 hidden shrink-0 items-center justify-center gap-5 rounded-full border border-[#E9DFD3] bg-[#F8F4EE]/78 px-5 py-1.5 text-sm text-[#5F564D] shadow-[inset_0_1px_0_rgba(255,255,255,0.75),0_8px_22px_rgba(31,31,31,0.045)] lg:flex xl:ml-7 xl:gap-7 xl:px-6">
-              {content.navigation.map((item) => (
+              {headerNavigation.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}

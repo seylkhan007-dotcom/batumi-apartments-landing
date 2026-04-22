@@ -19,9 +19,12 @@ import {
   getAdvantages,
   getApartments,
   getContacts,
+  getFooterSettings,
   getHomepageSettings,
+  getNavigation,
   getReviews,
   getSeoSettings,
+  getSiteSettings,
 } from '@/lib/content'
 import {
   buildLanguageHref,
@@ -36,14 +39,16 @@ type HomePageProps = {
 
 const siteUrl = 'https://nestroapartments.com'
 const fallbackOgImagePath = '/og-image.png'
+const fallbackWhatsappPhone = '+995558209739'
 const hasFallbackOgImage = existsSync(
   join(process.cwd(), 'public', 'og-image.png')
 )
 
-function getWhatsAppLink(phone?: string) {
+function getWhatsAppLink(phone?: string, message?: string) {
   if (!phone) return '#'
   const normalizedPhone = phone.replace(/[^\d]/g, '')
-  return `https://wa.me/${normalizedPhone}`
+  const query = message ? `?text=${encodeURIComponent(message)}` : ''
+  return `https://wa.me/${normalizedPhone}${query}`
 }
 
 function getTelegramLink(telegram?: string) {
@@ -322,17 +327,45 @@ export default async function HomePage({searchParams}: HomePageProps) {
   const language = getLanguageFromSearchParams(resolvedSearchParams)
   const fallback = getFallbackTexts(language)
 
-  const [apartments, advantages, reviews, contacts, homepageSettings] =
-    await Promise.all([
-      getApartments(),
-      getAdvantages(),
-      getReviews(),
-      getContacts(),
-      getHomepageSettings(),
-    ])
+  const [
+    apartments,
+    advantages,
+    reviews,
+    contacts,
+    homepageSettings,
+    siteSettings,
+    navigation,
+    footerSettings,
+  ] = await Promise.all([
+    getApartments(),
+    getAdvantages(),
+    getReviews(),
+    getContacts(),
+    getHomepageSettings(),
+    getSiteSettings(),
+    getNavigation(),
+    getFooterSettings(),
+  ])
 
-  const whatsappLink = getWhatsAppLink(contacts?.whatsapp)
-  const telegramLink = getTelegramLink(contacts?.telegram)
+  const whatsappPhone =
+    siteSettings?.whatsapp || contacts?.whatsapp || fallbackWhatsappPhone
+  const telegramValue = siteSettings?.telegram || contacts?.telegram
+  const phoneValue = siteSettings?.phone || contacts?.phone
+  const emailValue = siteSettings?.email || contacts?.email
+  const addressValue =
+    getLocalizedValue(siteSettings?.address, language) ||
+    (contacts ? getLocalizedValue(contacts.address, language) : undefined)
+  const workingHoursValue =
+    getLocalizedValue(siteSettings?.workingHours, language) ||
+    (contacts ? getLocalizedValue(contacts.workingHours, language) : undefined)
+  const guestWhatsappMessage =
+    getLocalizedValue(siteSettings?.defaultWhatsappMessageGuest, language) ||
+    undefined
+  const ownerWhatsappMessage =
+    getLocalizedValue(siteSettings?.defaultWhatsappMessageOwner, language) ||
+    undefined
+  const whatsappLink = getWhatsAppLink(whatsappPhone, guestWhatsappMessage)
+  const telegramLink = getTelegramLink(telegramValue)
 
   const mappedAdvantages = advantages.map((advantage) => ({
     _id: advantage._id,
@@ -397,6 +430,37 @@ export default async function HomePage({searchParams}: HomePageProps) {
   const navContacts = homepageSettings
     ? getLocalizedValue(homepageSettings.navigationContacts, language)
     : fallback.navContacts
+
+  const fallbackNavigationItems = [
+    {href: '#advantages', label: navAdvantages},
+    {href: '#apartments', label: navApartments},
+    {href: '#reviews', label: navReviews},
+    {href: '#contacts', label: navContacts},
+  ]
+  const navigationItems =
+    navigation?.items
+      ?.map((item) => ({
+        href: item.href || '',
+        label: getLocalizedValue(item.label, language),
+      }))
+      .filter((item) => item.href && item.label) ?? []
+  const headerNavigationItems = navigationItems.length
+    ? navigationItems
+    : fallbackNavigationItems
+  const footerQuickLinks =
+    footerSettings?.quickLinks
+      ?.map((item) => ({
+        href: item.href || '',
+        label: getLocalizedValue(item.label, language),
+      }))
+      .filter((item) => item.href && item.label) ?? []
+  const footerDescription =
+    getLocalizedValue(footerSettings?.description, language) ||
+    fallback.footerDescription
+  const footerCopyrightText =
+    getLocalizedValue(footerSettings?.copyrightText, language) || undefined
+  const brandTitle = siteSettings?.brandName || 'NESTRO'
+  const brandSubtitle = siteSettings?.brandSubtitle || 'Living Group'
 
   const advantagesBadge = homepageSettings
     ? getLocalizedValue(homepageSettings.advantagesBadge, language)
@@ -478,6 +542,11 @@ export default async function HomePage({searchParams}: HomePageProps) {
         navApartments={navApartments}
         navReviews={navReviews}
         navContacts={navContacts}
+        navigationItems={headerNavigationItems}
+        brandTitle={brandTitle}
+        brandSubtitle={brandSubtitle}
+        whatsappPhone={whatsappPhone}
+        whatsappMessage={guestWhatsappMessage}
         heroImageUrl={apartments[0]?.coverImageUrl}
         heroImageAlt={
           apartments[0] ? getLocalizedValue(apartments[0].title, language) : 'NESTRO'
@@ -525,19 +594,27 @@ export default async function HomePage({searchParams}: HomePageProps) {
       </FadeIn>
 
       <FadeIn>
-        <BookingSection language={language} />
+        <BookingSection
+          language={language}
+          whatsappPhone={whatsappPhone}
+          whatsappMessage={guestWhatsappMessage}
+        />
       </FadeIn>
 
       <FadeIn>
         <InstagramSection
           imageUrls={instagramImageUrls}
-          instagramUrl={contacts?.instagram}
+          instagramUrl={siteSettings?.instagram || contacts?.instagram}
           language={language}
         />
       </FadeIn>
 
       <FadeIn>
-        <PartnersSection language={language} />
+        <PartnersSection
+          language={language}
+          whatsappPhone={whatsappPhone}
+          whatsappMessage={ownerWhatsappMessage}
+        />
       </FadeIn>
 
       <FadeIn>
@@ -555,16 +632,12 @@ export default async function HomePage({searchParams}: HomePageProps) {
           telegramButton={fallback.contactsSectionButtonTelegram}
           whatsappLink={whatsappLink}
           telegramLink={telegramLink}
-          whatsappValue={contacts?.whatsapp}
-          phoneValue={contacts?.phone}
-          telegramValue={contacts?.telegram}
-          emailValue={contacts?.email}
-          addressValue={
-            contacts ? getLocalizedValue(contacts.address, language) : undefined
-          }
-          workingHoursValue={
-            contacts ? getLocalizedValue(contacts.workingHours, language) : undefined
-          }
+          whatsappValue={whatsappPhone}
+          phoneValue={phoneValue}
+          telegramValue={telegramValue}
+          emailValue={emailValue}
+          addressValue={addressValue}
+          workingHoursValue={workingHoursValue}
         />
       </FadeIn>
 
@@ -582,19 +655,20 @@ export default async function HomePage({searchParams}: HomePageProps) {
 
       <FadeIn>
         <FooterSection
-          brandTitle="NESTRO"
-          brandSubtitle="Living Group"
-          description={fallback.footerDescription}
-          phone={contacts?.phone}
-          whatsapp={contacts?.whatsapp}
-          telegram={contacts?.telegram}
-          email={contacts?.email}
-          address={
-            contacts ? getLocalizedValue(contacts.address, language) : undefined
-          }
-          workingHours={
-            contacts ? getLocalizedValue(contacts.workingHours, language) : undefined
-          }
+          brandTitle={brandTitle}
+          brandSubtitle={brandSubtitle}
+          description={footerDescription}
+          copyrightText={footerCopyrightText}
+          showDeveloperCredit={footerSettings?.showDeveloperCredit}
+          developerCreditText={footerSettings?.developerCreditText}
+          navigationItems={headerNavigationItems}
+          quickLinks={footerQuickLinks}
+          phone={phoneValue}
+          whatsapp={whatsappPhone}
+          telegram={telegramValue}
+          email={emailValue}
+          address={addressValue}
+          workingHours={workingHoursValue}
           navAdvantages={navAdvantages}
           navApartments={navApartments}
           navReviews={navReviews}
@@ -602,7 +676,11 @@ export default async function HomePage({searchParams}: HomePageProps) {
         />
       </FadeIn>
 
-      <FloatingWhatsAppButton language={language} />
+      <FloatingWhatsAppButton
+        language={language}
+        whatsappPhone={whatsappPhone}
+        whatsappMessage={guestWhatsappMessage}
+      />
     </main>
   )
 }
