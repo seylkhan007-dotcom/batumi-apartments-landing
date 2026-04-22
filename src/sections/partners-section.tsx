@@ -40,9 +40,9 @@ export function PartnersSection({language}: PartnersSectionProps) {
 
   return (
     <section className="bg-[#F6F3EF]">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        <div className="overflow-hidden rounded-[28px] border border-[#2F2A25]/10 bg-[#1F1F1F] shadow-[0_24px_60px_rgba(31,31,31,0.14)]">
-          <div className="grid gap-8 p-6 text-white sm:p-8 lg:grid-cols-[1fr_0.8fr] lg:items-center lg:p-10">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18">
+        <div className="overflow-hidden rounded-[28px] border border-[#2F2A25]/10 bg-[#26231F] shadow-[0_20px_50px_rgba(31,31,31,0.12)]">
+          <div className="grid gap-7 p-6 text-white sm:p-8 lg:grid-cols-[1fr_0.72fr] lg:items-center lg:p-9">
             <div>
               <p className="text-xs uppercase tracking-[0.24em] text-[#D9C7AE] sm:text-sm sm:tracking-[0.3em]">
                 {content.badge}
@@ -55,7 +55,7 @@ export function PartnersSection({language}: PartnersSectionProps) {
               </p>
             </div>
 
-            <div className="rounded-[24px] border border-white/10 bg-white/7 p-5 sm:p-6">
+            <div className="rounded-[24px] border border-white/10 bg-white/6 p-5 sm:p-6">
               <div className="flex flex-wrap gap-2">
                 {content.points.map((point) => (
                   <span
@@ -71,7 +71,7 @@ export function PartnersSection({language}: PartnersSectionProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#EFE7DC]"
+                className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-white/92 px-6 py-3 text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#EFE7DC]"
               >
                 {content.button}
               </a>

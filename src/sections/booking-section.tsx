@@ -74,7 +74,7 @@ export function BookingSection({language}: BookingSectionProps) {
 
   return (
     <section className="border-y border-[#E7DED2] bg-[#F6F3EF]">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-[#A88A5D] sm:text-sm sm:tracking-[0.3em]">
@@ -92,7 +92,7 @@ export function BookingSection({language}: BookingSectionProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#1F1F1F] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(31,31,31,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#2F2A25]"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#1F1F1F] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(31,31,31,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#2F2A25] sm:w-auto"
               >
                 {content.primaryButton}
               </a>
@@ -100,7 +100,7 @@ export function BookingSection({language}: BookingSectionProps) {
                 href={whatsappUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#1F1F1F] bg-white/80 px-6 py-3 text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#EFE7DC]"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-full border border-[#1F1F1F] bg-white/80 px-6 py-3 text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#EFE7DC] sm:w-auto"
               >
                 {content.secondaryButton}
               </a>
@@ -111,7 +111,7 @@ export function BookingSection({language}: BookingSectionProps) {
             {content.steps.map((step, index) => (
               <article
                 key={step.title}
-                className="rounded-[24px] border border-[#E7DED2] bg-white p-5 shadow-[0_12px_32px_rgba(31,31,31,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(31,31,31,0.10)] sm:rounded-[28px] sm:p-6"
+                className="rounded-[24px] border border-[#E5DBCE] bg-white p-5 shadow-[0_12px_30px_rgba(31,31,31,0.055)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(31,31,31,0.09)] sm:rounded-[28px] sm:p-6"
               >
                 <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#F3EDE4] text-sm font-semibold text-[#8A6B3F]">
                   {index + 1}

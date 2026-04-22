@@ -70,8 +70,8 @@ export function ServiceSection({language}: ServiceSectionProps) {
 
   return (
     <section className="border-y border-[#E7DED2] bg-[#F6F3EF]">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        <div className="mb-8 max-w-2xl sm:mb-10">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18">
+        <div className="mb-8 max-w-2xl">
           <p className="text-xs uppercase tracking-[0.24em] text-[#A88A5D] sm:text-sm sm:tracking-[0.3em]">
             {content.badge}
           </p>
@@ -87,7 +87,7 @@ export function ServiceSection({language}: ServiceSectionProps) {
           {content.cards.map((card, index) => (
             <article
               key={card.title}
-              className="group rounded-[24px] border border-[#E7DED2] bg-white p-5 shadow-[0_12px_32px_rgba(31,31,31,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(31,31,31,0.10)] sm:rounded-[28px] sm:p-6"
+              className="group rounded-[24px] border border-[#E5DBCE] bg-white p-5 shadow-[0_12px_30px_rgba(31,31,31,0.055)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(31,31,31,0.09)] sm:rounded-[28px] sm:p-6"
             >
               <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-full bg-[#F3EDE4] text-sm font-semibold text-[#8A6B3F] transition duration-300 group-hover:bg-[#E8DBC8] sm:h-12 sm:w-12">
                 {String(index + 1).padStart(2, '0')}

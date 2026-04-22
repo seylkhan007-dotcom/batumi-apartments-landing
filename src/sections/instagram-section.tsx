@@ -39,7 +39,7 @@ export function InstagramSection({
 
   return (
     <section className="bg-[#F1ECE4]">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18">
         <div className="mb-8 flex flex-col gap-5 sm:mb-10 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.24em] text-[#A88A5D] sm:text-sm sm:tracking-[0.3em]">
@@ -67,7 +67,7 @@ export function InstagramSection({
           {displayImages.map((imageUrl, index) => (
             <div
               key={`${imageUrl}-${index}`}
-              className="group relative aspect-[4/5] overflow-hidden rounded-[22px] border border-white/70 bg-white shadow-[0_12px_32px_rgba(31,31,31,0.08)] sm:rounded-[26px]"
+              className="group relative aspect-[4/5] overflow-hidden rounded-[20px] border border-white/70 bg-white shadow-[0_12px_30px_rgba(31,31,31,0.07)] sm:rounded-[24px]"
             >
               <Image
                 src={imageUrl}
@@ -83,7 +83,7 @@ export function InstagramSection({
           {placeholders.map((_, index) => (
             <div
               key={`instagram-placeholder-${index}`}
-              className="relative aspect-[4/5] overflow-hidden rounded-[22px] border border-[#E2D7C8] bg-[linear-gradient(135deg,_#EFE7DC,_#FFFFFF_45%,_#D9C7AE)] shadow-[0_12px_32px_rgba(31,31,31,0.06)] sm:rounded-[26px]"
+              className="relative aspect-[4/5] overflow-hidden rounded-[20px] border border-[#E2D7C8] bg-[linear-gradient(135deg,_#EFE7DC,_#FFFFFF_45%,_#D9C7AE)] shadow-[0_12px_30px_rgba(31,31,31,0.055)] sm:rounded-[24px]"
             >
               <div className="absolute inset-x-4 bottom-4 rounded-[18px] bg-white/55 p-3 backdrop-blur">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8A6B3F]">
