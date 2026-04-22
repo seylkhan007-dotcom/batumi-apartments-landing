@@ -20,6 +20,10 @@ function getLocationContent(language: Language) {
       panelTitle: 'Batumi stay',
       panelText:
         'Convenient locations for guests who want the sea, city life and everyday comfort close at hand.',
+      highlights: [
+        {title: 'Sea', description: 'nearby'},
+        {title: 'City', description: 'close'},
+      ],
     }
   }
 
@@ -37,6 +41,10 @@ function getLocationContent(language: Language) {
     panelTitle: 'Проживание в Батуми',
     panelText:
       'Удобные локации для гостей, которым важно быть рядом с морем, городом и повседневной инфраструктурой.',
+    highlights: [
+      {title: 'Море', description: 'рядом'},
+      {title: 'Город', description: 'близко'},
+    ],
   }
 }
 
@@ -89,14 +97,19 @@ export function LocationSection({language}: LocationSectionProps) {
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="rounded-[18px] border border-white/12 bg-white/10 p-4">
-                  <p className="text-2xl font-semibold">Sea</p>
-                  <p className="mt-1 text-white/62">nearby</p>
-                </div>
-                <div className="rounded-[18px] border border-white/12 bg-white/10 p-4">
-                  <p className="text-2xl font-semibold">City</p>
-                  <p className="mt-1 text-white/62">close</p>
-                </div>
+                {content.highlights.map((highlight) => (
+                  <div
+                    key={highlight.title}
+                    className="rounded-[18px] border border-white/12 bg-white/10 p-4"
+                  >
+                    <p className="text-2xl font-semibold">
+                      {highlight.title}
+                    </p>
+                    <p className="mt-1 text-white/62">
+                      {highlight.description}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
