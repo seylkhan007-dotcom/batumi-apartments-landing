@@ -308,6 +308,7 @@ export default async function HomePage({searchParams}: HomePageProps) {
     bedType: apartment.bedType,
     rentalFormats: apartment.rentalFormats ?? [],
     district: getLocalizedValue(apartment.district, language),
+    viewType: apartment.viewType,
     viewLabel: getViewLabel(apartment.viewType, language),
     priceLabel: formatPrice(apartment.priceFrom, apartment.currency, language),
     amenities: (apartment.amenities ?? [])
@@ -478,11 +479,9 @@ export default async function HomePage({searchParams}: HomePageProps) {
           badge={apartmentsBadge}
           title={apartmentsTitle}
           description={apartmentsDescription}
-          apartmentGuestsLabel={fallback.apartmentGuests}
-          apartmentButton={fallback.apartmentButton}
           apartmentCardNoImage={fallback.apartmentCardNoImage}
           apartments={mappedApartments}
-          whatsappLink={whatsappLink}
+          language={language}
         />
       </FadeIn>
 

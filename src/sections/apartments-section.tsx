@@ -1,4 +1,13 @@
 import Image from 'next/image'
+import {
+  getAmenityLabel,
+  getApartmentTypeLabel,
+  getBedTypeLabel,
+  getCapacityLabel,
+  getRentalFormatLabel,
+  getViewTypeLabel,
+} from '@/utils/apartment-labels'
+import type {Language} from '@/utils/localization'
 
 type ApartmentItem = {
   _id: string
@@ -11,6 +20,7 @@ type ApartmentItem = {
   bedType?: string
   rentalFormats: string[]
   district: string
+  viewType?: string
   viewLabel: string
   priceLabel: string
   amenities: string[]
@@ -25,23 +35,35 @@ type ApartmentsSectionProps = {
   badge: string
   title: string
   description: string
-  apartmentGuestsLabel: string
-  apartmentButton: string
   apartmentCardNoImage: string
   apartments: ApartmentItem[]
-  whatsappLink: string
+  language: Language
+}
+
+const whatsappAvailabilityBaseUrl = 'https://wa.me/995558209739'
+const maxVisibleAmenities = 6
+
+function getAvailabilityWhatsappUrl(title: string, language: Language) {
+  const message =
+    language === 'ru'
+      ? `Здравствуйте! Хочу уточнить доступность апартамента: ${title}`
+      : `Hello! I would like to check availability for: ${title}`
+
+  return `${whatsappAvailabilityBaseUrl}?text=${encodeURIComponent(message)}`
 }
 
 export function ApartmentsSection({
   badge,
   title,
   description,
-  apartmentGuestsLabel,
-  apartmentButton,
   apartmentCardNoImage,
   apartments,
-  whatsappLink,
+  language,
 }: ApartmentsSectionProps) {
+  const bookButtonText = language === 'ru' ? 'Забронировать' : 'Book now'
+  const availabilityButtonText =
+    language === 'ru' ? 'Уточнить доступность' : 'Check availability'
+
   return (
     <section id="apartments" className="border-y border-[#E7DED2] bg-[#F1ECE4]">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
@@ -54,85 +76,130 @@ export function ApartmentsSection({
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {apartments.map((apartment) => (
-            <article
-              key={apartment._id}
-              className="overflow-hidden rounded-[28px] border border-[#E2D7C8] bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(31,31,31,0.12)]"
-            >
-              {apartment.coverImageUrl ? (
-                <div className="relative h-64 w-full overflow-hidden">
-                  <Image
-                    src={apartment.coverImageUrl}
-                    alt={apartment.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                    className="object-cover transition duration-500 hover:scale-[1.03]"
-                  />
-                </div>
-              ) : (
-                <div className="flex h-64 w-full items-center justify-center bg-[#ECE6DD] text-[#7B7166]">
-                  {apartmentCardNoImage}
-                </div>
-              )}
+          {apartments.map((apartment) => {
+            const availabilityWhatsappUrl = getAvailabilityWhatsappUrl(
+              apartment.title,
+              language
+            )
+            const bookUrl = apartment.bookingUrl || availabilityWhatsappUrl
+            const apartmentTypeLabel = getApartmentTypeLabel(
+              apartment.apartmentType,
+              language
+            )
+            const viewTypeLabel =
+              getViewTypeLabel(apartment.viewType, language) ||
+              apartment.viewLabel
+            const capacityLabel = getCapacityLabel(apartment.capacity, language)
+            const bedTypeLabel = getBedTypeLabel(apartment.bedType, language)
+            const rentalFormatLabels = apartment.rentalFormats
+              .map((rentalFormat) =>
+                getRentalFormatLabel(rentalFormat, language)
+              )
+              .filter(Boolean)
+            const amenityLabels = apartment.amenities
+              .map((amenity) => getAmenityLabel(amenity, language))
+              .filter(Boolean)
+              .slice(0, maxVisibleAmenities)
+            const detailBadges = [
+              apartment.district,
+              apartmentTypeLabel,
+              viewTypeLabel,
+              capacityLabel,
+              bedTypeLabel,
+              ...rentalFormatLabels,
+            ].filter(Boolean)
 
-              <div className="p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-xl font-semibold">{apartment.title}</h3>
-                  {apartment.priceLabel && (
-                    <span className="rounded-full bg-[#F3EDE4] px-3 py-1 text-xs font-medium text-[#7A6543]">
-                      {apartment.priceLabel}
-                    </span>
-                  )}
-                </div>
-
-                <p className="mt-3 text-sm leading-7 text-[#5C544B]">
-                  {apartment.shortDescription}
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {apartment.capacity && (
-                    <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
-                      {apartment.capacity} {apartmentGuestsLabel}
-                    </span>
-                  )}
-                  {apartment.district && (
-                    <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
-                      {apartment.district}
-                    </span>
-                  )}
-                  {apartment.viewLabel && (
-                    <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
-                      {apartment.viewLabel}
-                    </span>
-                  )}
-                </div>
-
-                {apartment.amenities.length > 0 && (
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {apartment.amenities.map((amenity, index) => (
-                      <span
-                        key={`${apartment._id}-${index}`}
-                        className="rounded-full bg-[#F7F3ED] px-3 py-1 text-xs text-[#6B6258]"
-                      >
-                        {amenity}
-                      </span>
-                    ))}
+            return (
+              <article
+                key={apartment._id}
+                className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[#E2D7C8] bg-white shadow-[0_16px_40px_rgba(31,31,31,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(31,31,31,0.14)]"
+              >
+                {apartment.coverImageUrl ? (
+                  <div className="relative h-72 w-full overflow-hidden bg-[#ECE6DD]">
+                    <Image
+                      src={apartment.coverImageUrl}
+                      alt={apartment.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                      className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                    />
+                    {apartment.priceLabel && (
+                      <div className="absolute bottom-4 left-4 rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-[#1F1F1F] shadow-sm backdrop-blur">
+                        {apartment.priceLabel}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex h-72 w-full items-center justify-center bg-[#ECE6DD] px-6 text-center text-sm font-medium text-[#7B7166]">
+                    {apartmentCardNoImage}
                   </div>
                 )}
 
-                <div className="mt-6">
-                  <a
-                    href={apartment.bookingUrl || whatsappLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center justify-center rounded-full bg-[#1F1F1F] px-5 py-3 text-sm font-medium text-white transition duration-300 hover:-translate-y-0.5 hover:opacity-90"
-                  >
-                    {apartmentButton}
-                  </a>
+                <div className="flex flex-1 flex-col p-6">
+                  <div>
+                    {apartment.complexName && (
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A88A5D]">
+                        {apartment.complexName}
+                      </p>
+                    )}
+                    <h3 className="mt-2 text-2xl font-semibold leading-tight text-[#1F1F1F]">
+                      {apartment.title}
+                    </h3>
+                    {apartment.shortDescription && (
+                      <p className="mt-3 text-sm leading-7 text-[#5C544B]">
+                        {apartment.shortDescription}
+                      </p>
+                    )}
+                  </div>
+
+                  {detailBadges.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {detailBadges.map((detail) => (
+                        <span
+                          key={`${apartment._id}-${detail}`}
+                          className="rounded-full border border-[#E7DED2] bg-[#FBF8F3] px-3 py-1.5 text-xs font-medium text-[#5C544B]"
+                        >
+                          {detail}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {amenityLabels.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {amenityLabels.map((amenity) => (
+                        <span
+                          key={`${apartment._id}-${amenity}`}
+                          className="rounded-full bg-[#F3EDE4] px-3 py-1.5 text-xs text-[#6B6258]"
+                        >
+                          {amenity}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="mt-auto grid gap-3 pt-7 sm:grid-cols-2">
+                    <a
+                      href={bookUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#1F1F1F] px-5 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#2F2A25]"
+                    >
+                      {bookButtonText}
+                    </a>
+                    <a
+                      href={availabilityWhatsappUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#1F1F1F] bg-white px-5 py-3 text-center text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#F3EDE4]"
+                    >
+                      {availabilityButtonText}
+                    </a>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            )
+          })}
         </div>
       </div>
     </section>
