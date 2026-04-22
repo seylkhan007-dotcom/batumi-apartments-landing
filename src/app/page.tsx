@@ -1,7 +1,9 @@
 import type {Metadata} from 'next'
 import {FadeIn} from '@/components/common/fade-in'
+import {FloatingWhatsAppButton} from '@/components/floating-whatsapp-button'
 import {AdvantagesSection} from '@/sections/advantages-section'
 import {ApartmentsSection} from '@/sections/apartments-section'
+import {BookingSection} from '@/sections/booking-section'
 import {ContactsSection} from '@/sections/contacts-section'
 import {FinalCtaSection} from '@/sections/final-cta-section'
 import {FooterSection} from '@/sections/footer-section'
@@ -475,6 +477,10 @@ export default async function HomePage({searchParams}: HomePageProps) {
       </FadeIn>
 
       <FadeIn>
+        <BookingSection language={language} />
+      </FadeIn>
+
+      <FadeIn>
         <ContactsSection
           badge={contactsBadge}
           title={contactsTitle}
@@ -535,6 +541,8 @@ export default async function HomePage({searchParams}: HomePageProps) {
           navContacts={navContacts}
         />
       </FadeIn>
+
+      <FloatingWhatsAppButton language={language} />
     </main>
   )
 }
