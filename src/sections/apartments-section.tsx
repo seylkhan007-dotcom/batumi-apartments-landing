@@ -3,13 +3,22 @@ import Image from 'next/image'
 type ApartmentItem = {
   _id: string
   title: string
+  slug?: string
   shortDescription: string
-  capacity: number
+  apartmentType?: string
+  complexName?: string
+  capacity?: number
+  bedType?: string
+  rentalFormats: string[]
   district: string
   viewLabel: string
   priceLabel: string
   amenities: string[]
   coverImageUrl?: string
+  galleryUrls: string[]
+  isFeatured?: boolean
+  orderRank?: string
+  bookingUrl?: string
 }
 
 type ApartmentsSectionProps = {
@@ -69,9 +78,11 @@ export function ApartmentsSection({
               <div className="p-6">
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="text-xl font-semibold">{apartment.title}</h3>
-                  <span className="rounded-full bg-[#F3EDE4] px-3 py-1 text-xs font-medium text-[#7A6543]">
-                    {apartment.priceLabel}
-                  </span>
+                  {apartment.priceLabel && (
+                    <span className="rounded-full bg-[#F3EDE4] px-3 py-1 text-xs font-medium text-[#7A6543]">
+                      {apartment.priceLabel}
+                    </span>
+                  )}
                 </div>
 
                 <p className="mt-3 text-sm leading-7 text-[#5C544B]">
@@ -79,15 +90,21 @@ export function ApartmentsSection({
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
-                    {apartment.capacity} {apartmentGuestsLabel}
-                  </span>
-                  <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
-                    {apartment.district}
-                  </span>
-                  <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
-                    {apartment.viewLabel}
-                  </span>
+                  {apartment.capacity && (
+                    <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
+                      {apartment.capacity} {apartmentGuestsLabel}
+                    </span>
+                  )}
+                  {apartment.district && (
+                    <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
+                      {apartment.district}
+                    </span>
+                  )}
+                  {apartment.viewLabel && (
+                    <span className="rounded-full border border-[#E7DED2] px-3 py-1 text-xs text-[#5C544B]">
+                      {apartment.viewLabel}
+                    </span>
+                  )}
                 </div>
 
                 {apartment.amenities.length > 0 && (
@@ -105,7 +122,7 @@ export function ApartmentsSection({
 
                 <div className="mt-6">
                   <a
-                    href={whatsappLink}
+                    href={apartment.bookingUrl || whatsappLink}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center rounded-full bg-[#1F1F1F] px-5 py-3 text-sm font-medium text-white transition duration-300 hover:-translate-y-0.5 hover:opacity-90"

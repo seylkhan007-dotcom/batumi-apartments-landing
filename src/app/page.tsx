@@ -42,13 +42,23 @@ function getTelegramLink(telegram?: string) {
   return `https://t.me/${telegram}`
 }
 
-function formatPrice(priceFrom: number, currency: string, language: Language) {
+function formatPrice(
+  priceFrom: number | undefined,
+  currency: string | undefined,
+  language: Language
+) {
+  if (!priceFrom) return language === 'ru' ? 'Цена по запросу' : 'Price on request'
+
+  const priceCurrency = currency || 'USD'
+
   return language === 'ru'
-    ? `от ${priceFrom} ${currency}`
-    : `from ${priceFrom} ${currency}`
+    ? `от ${priceFrom} ${priceCurrency}`
+    : `from ${priceFrom} ${priceCurrency}`
 }
 
-function getViewLabel(viewType: string, language: Language) {
+function getViewLabel(viewType: string | undefined, language: Language) {
+  if (!viewType) return ''
+
   const ruMap: Record<string, string> = {
     'sea-view': 'Вид на море',
     'city-view': 'Вид на город',
@@ -68,6 +78,19 @@ function getViewLabel(viewType: string, language: Language) {
   return language === 'ru'
     ? ruMap[viewType] ?? viewType
     : enMap[viewType] ?? viewType
+}
+
+function getAmenityLabel(
+  amenity: string | {ru?: string; en?: string},
+  language: Language
+) {
+  if (typeof amenity === 'string') return amenity
+
+  if (language === 'en') {
+    return amenity.en || amenity.ru || ''
+  }
+
+  return amenity.ru || amenity.en || ''
 }
 
 function getStayTypeLabel(stayType?: string, language: Language = 'ru') {
@@ -276,16 +299,25 @@ export default async function HomePage({searchParams}: HomePageProps) {
 
   const mappedApartments = apartments.map((apartment) => ({
     _id: apartment._id,
-    title: getLocalizedValue(apartment.title, language),
+    title: getLocalizedValue(apartment.title, language) || fallback.navApartments,
+    slug: apartment.slug,
     shortDescription: getLocalizedValue(apartment.shortDescription, language),
+    apartmentType: apartment.apartmentType,
+    complexName: apartment.complexName,
     capacity: apartment.capacity,
+    bedType: apartment.bedType,
+    rentalFormats: apartment.rentalFormats ?? [],
     district: getLocalizedValue(apartment.district, language),
     viewLabel: getViewLabel(apartment.viewType, language),
     priceLabel: formatPrice(apartment.priceFrom, apartment.currency, language),
-    amenities: apartment.amenities.map((amenity) =>
-      getLocalizedValue(amenity, language)
-    ),
+    amenities: (apartment.amenities ?? [])
+      .map((amenity) => getAmenityLabel(amenity, language))
+      .filter(Boolean),
     coverImageUrl: apartment.coverImageUrl,
+    galleryUrls: apartment.galleryUrls ?? [],
+    isFeatured: apartment.isFeatured,
+    orderRank: apartment.orderRank,
+    bookingUrl: apartment.bookingUrl,
   }))
 
   const mappedReviews = reviews.map((review) => ({

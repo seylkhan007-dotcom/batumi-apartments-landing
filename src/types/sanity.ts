@@ -10,17 +10,24 @@ export type LocalizedText = {
 
 export type Apartment = {
   _id: string
-  title: LocalizedString
-  slug: string
-  shortDescription: LocalizedText
-  capacity: number
-  district: LocalizedString
-  viewType: string
-  priceFrom: number
-  currency: string
-  amenities: LocalizedString[]
-  coverImageUrl: string
+  title?: LocalizedString
+  slug?: string
+  shortDescription?: LocalizedText
+  apartmentType?: string
+  complexName?: string
+  district?: LocalizedString
+  viewType?: string
+  capacity?: number
+  bedType?: string
+  rentalFormats?: string[]
+  amenities?: Array<LocalizedString | string>
+  priceFrom?: number
+  currency?: string
+  coverImageUrl?: string
   galleryUrls?: string[]
+  isFeatured?: boolean
+  orderRank?: string
+  bookingUrl?: string
 }
 
 export type Advantage = {

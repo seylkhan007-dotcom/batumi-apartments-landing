@@ -4,14 +4,21 @@ export const apartmentsQuery = `
     title,
     "slug": slug.current,
     shortDescription,
-    capacity,
+    apartmentType,
+    complexName,
     district,
     viewType,
+    capacity,
+    bedType,
+    rentalFormats,
+    amenities,
     priceFrom,
     currency,
-    amenities,
     "coverImageUrl": coverImage.asset->url,
-    "galleryUrls": gallery[].asset->url
+    "galleryUrls": gallery[].asset->url,
+    isFeatured,
+    orderRank,
+    bookingUrl
   }
 `
 
