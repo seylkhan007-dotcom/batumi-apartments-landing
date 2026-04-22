@@ -346,26 +346,6 @@ export default async function HomePage({searchParams}: HomePageProps) {
     ? getLocalizedValue(homepageSettings.navigationContacts, language)
     : fallback.navContacts
 
-  const heroBadge = homepageSettings
-    ? getLocalizedValue(homepageSettings.heroBadge, language)
-    : fallback.heroBadge
-
-  const heroTitle = homepageSettings
-    ? getLocalizedValue(homepageSettings.heroTitle, language)
-    : fallback.heroTitle
-
-  const heroDescription = homepageSettings
-    ? getLocalizedValue(homepageSettings.heroDescription, language)
-    : fallback.heroDescription
-
-  const heroPrimaryButton = homepageSettings
-    ? getLocalizedValue(homepageSettings.heroPrimaryButton, language)
-    : fallback.heroPrimaryButton
-
-  const heroSecondaryButton = homepageSettings
-    ? getLocalizedValue(homepageSettings.heroSecondaryButton, language)
-    : fallback.heroSecondaryButton
-
   const advantagesBadge = homepageSettings
     ? getLocalizedValue(homepageSettings.advantagesBadge, language)
     : fallback.advantagesBadge
@@ -446,23 +426,13 @@ export default async function HomePage({searchParams}: HomePageProps) {
         navApartments={navApartments}
         navReviews={navReviews}
         navContacts={navContacts}
-        heroBadge={heroBadge}
-        heroTitle={heroTitle}
-        heroDescription={heroDescription}
-        heroPrimaryButton={heroPrimaryButton}
-        heroSecondaryButton={heroSecondaryButton}
-        statsApartments={fallback.statsApartments}
-        statsReviews={fallback.statsReviews}
-        statsSupport={fallback.statsSupport}
-        apartmentsCount={apartments.length}
-        reviewsCount={reviews.length}
-        whatsappLink={whatsappLink}
         heroImageUrl={apartments[0]?.coverImageUrl}
         heroImageAlt={
           apartments[0] ? getLocalizedValue(apartments[0].title, language) : 'NESTRO'
         }
         heroFallbackImage={fallback.heroFallbackImage}
         languageSwitcher={languageSwitcher}
+        language={language}
       />
 
       <FadeIn>

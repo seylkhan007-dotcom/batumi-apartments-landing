@@ -42,6 +42,7 @@ type ApartmentsSectionProps = {
 
 const whatsappAvailabilityBaseUrl = 'https://wa.me/995558209739'
 const maxVisibleAmenities = 6
+const maxVisibleMobileAmenities = 4
 
 function getAvailabilityWhatsappUrl(title: string, language: Language) {
   const message =
@@ -66,16 +67,20 @@ export function ApartmentsSection({
 
   return (
     <section id="apartments" className="border-y border-[#E7DED2] bg-[#F1ECE4]">
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
-        <div className="mb-10 max-w-2xl">
-          <p className="text-sm uppercase tracking-[0.3em] text-[#A88A5D]">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="mb-8 max-w-2xl sm:mb-10">
+          <p className="text-xs uppercase tracking-[0.24em] text-[#A88A5D] sm:text-sm sm:tracking-[0.3em]">
             {badge}
           </p>
-          <h2 className="mt-3 text-3xl font-semibold md:text-4xl">{title}</h2>
-          <p className="mt-4 text-base leading-8 text-[#5C544B]">{description}</p>
+          <h2 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl">
+            {title}
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-[#5C544B] sm:mt-4 sm:text-base sm:leading-8">
+            {description}
+          </p>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 md:gap-8 xl:grid-cols-3">
           {apartments.map((apartment) => {
             const availabilityWhatsappUrl = getAvailabilityWhatsappUrl(
               apartment.title,
@@ -112,10 +117,10 @@ export function ApartmentsSection({
             return (
               <article
                 key={apartment._id}
-                className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-[#E2D7C8] bg-white shadow-[0_16px_40px_rgba(31,31,31,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(31,31,31,0.14)]"
+                className="group flex h-full flex-col overflow-hidden rounded-[22px] border border-[#E2D7C8] bg-white shadow-[0_12px_32px_rgba(31,31,31,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(31,31,31,0.14)] sm:rounded-[28px] sm:shadow-[0_16px_40px_rgba(31,31,31,0.08)]"
               >
                 {apartment.coverImageUrl ? (
-                  <div className="relative h-72 w-full overflow-hidden bg-[#ECE6DD]">
+                  <div className="relative h-56 w-full overflow-hidden bg-[#ECE6DD] sm:h-72">
                     <Image
                       src={apartment.coverImageUrl}
                       alt={apartment.title}
@@ -124,40 +129,40 @@ export function ApartmentsSection({
                       className="object-cover transition duration-700 group-hover:scale-[1.04]"
                     />
                     {apartment.priceLabel && (
-                      <div className="absolute bottom-4 left-4 rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-[#1F1F1F] shadow-sm backdrop-blur">
+                      <div className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1.5 text-sm font-semibold text-[#1F1F1F] shadow-sm backdrop-blur sm:bottom-4 sm:left-4 sm:px-4 sm:py-2">
                         {apartment.priceLabel}
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="flex h-72 w-full items-center justify-center bg-[#ECE6DD] px-6 text-center text-sm font-medium text-[#7B7166]">
+                  <div className="flex h-56 w-full items-center justify-center bg-[#ECE6DD] px-6 text-center text-sm font-medium text-[#7B7166] sm:h-72">
                     {apartmentCardNoImage}
                   </div>
                 )}
 
-                <div className="flex flex-1 flex-col p-6">
+                <div className="flex flex-1 flex-col p-4 sm:p-6">
                   <div>
                     {apartment.complexName && (
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A88A5D]">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#A88A5D] sm:text-xs sm:tracking-[0.2em]">
                         {apartment.complexName}
                       </p>
                     )}
-                    <h3 className="mt-2 text-2xl font-semibold leading-tight text-[#1F1F1F]">
+                    <h3 className="mt-1.5 text-xl font-semibold leading-tight text-[#1F1F1F] sm:mt-2 sm:text-2xl">
                       {apartment.title}
                     </h3>
                     {apartment.shortDescription && (
-                      <p className="mt-3 text-sm leading-7 text-[#5C544B]">
+                      <p className="mt-2.5 text-sm leading-6 text-[#5C544B] sm:mt-3 sm:leading-7">
                         {apartment.shortDescription}
                       </p>
                     )}
                   </div>
 
                   {detailBadges.length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-2">
+                    <div className="mt-4 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2">
                       {detailBadges.map((detail) => (
                         <span
                           key={`${apartment._id}-${detail}`}
-                          className="rounded-full border border-[#E7DED2] bg-[#FBF8F3] px-3 py-1.5 text-xs font-medium text-[#5C544B]"
+                          className="rounded-full border border-[#E7DED2] bg-[#FBF8F3] px-2.5 py-1 text-[11px] font-medium leading-4 text-[#5C544B] sm:px-3 sm:py-1.5 sm:text-xs"
                         >
                           {detail}
                         </span>
@@ -166,11 +171,15 @@ export function ApartmentsSection({
                   )}
 
                   {amenityLabels.length > 0 && (
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {amenityLabels.map((amenity) => (
+                    <div className="mt-4 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2">
+                      {amenityLabels.map((amenity, index) => (
                         <span
                           key={`${apartment._id}-${amenity}`}
-                          className="rounded-full bg-[#F3EDE4] px-3 py-1.5 text-xs text-[#6B6258]"
+                          className={`rounded-full bg-[#F3EDE4] px-2.5 py-1 text-[11px] leading-4 text-[#6B6258] sm:px-3 sm:py-1.5 sm:text-xs ${
+                            index >= maxVisibleMobileAmenities
+                              ? 'hidden sm:inline-flex'
+                              : ''
+                          }`}
                         >
                           {amenity}
                         </span>
@@ -178,12 +187,12 @@ export function ApartmentsSection({
                     </div>
                   )}
 
-                  <div className="mt-auto grid gap-3 pt-7 sm:grid-cols-2">
+                  <div className="mt-auto grid gap-2.5 pt-5 sm:grid-cols-2 sm:gap-3 sm:pt-7">
                     <a
                       href={bookUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex min-h-12 items-center justify-center rounded-full bg-[#1F1F1F] px-5 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#2F2A25]"
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#1F1F1F] px-5 py-3 text-center text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#2F2A25] sm:min-h-12"
                     >
                       {bookButtonText}
                     </a>
@@ -191,7 +200,7 @@ export function ApartmentsSection({
                       href={availabilityWhatsappUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex min-h-12 items-center justify-center rounded-full border border-[#1F1F1F] bg-white px-5 py-3 text-center text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#F3EDE4]"
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[#1F1F1F] bg-white px-5 py-3 text-center text-sm font-semibold text-[#1F1F1F] transition duration-300 hover:-translate-y-0.5 hover:bg-[#F3EDE4] sm:min-h-12"
                     >
                       {availabilityButtonText}
                     </a>
