@@ -127,6 +127,7 @@ export function BookingSection({
   whatsappMessage,
 }: BookingSectionProps) {
   const content = getBookingContent(language)
+  const dateFormatHint = language === 'en' ? 'yyyy-mm-dd' : 'дд.мм.гггг'
   const [form, setForm] = useState<GuestLeadFormState>(emptyGuestLeadForm)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -265,6 +266,9 @@ export function BookingSection({
 
               <label className={labelClass}>
                 {content.fields.checkinDate}
+                <span className="mt-1 block text-xs font-normal tracking-[0.02em] text-[#8A8177]">
+                  {dateFormatHint}
+                </span>
                 <input
                   className={inputClass}
                   type="date"
@@ -278,6 +282,9 @@ export function BookingSection({
 
               <label className={labelClass}>
                 {content.fields.checkoutDate}
+                <span className="mt-1 block text-xs font-normal tracking-[0.02em] text-[#8A8177]">
+                  {dateFormatHint}
+                </span>
                 <input
                   className={inputClass}
                   type="date"
