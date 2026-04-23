@@ -1,6 +1,7 @@
 'use client'
 
 import {useState, type FormEvent} from 'react'
+import {DateField} from '@/components/date-field'
 import type {Language} from '@/utils/localization'
 
 type BookingSectionProps = {
@@ -33,6 +34,10 @@ function getBookingContent(language: Language) {
         guestsCount: 'Number of guests',
         message: 'Message',
       },
+      phonePlaceholder: 'For example: +123 456 789 000',
+      phoneHelper: 'Enter your number in international format',
+      phoneRequiredError: 'Please enter your phone or WhatsApp number',
+      phoneInvalidError: 'Please check your phone number',
       submitButton: 'Send request',
       sendingButton: 'Sending...',
       successMessage: 'Request sent. We will contact you soon.',
@@ -121,16 +126,47 @@ const emptyGuestLeadForm: GuestLeadFormState = {
   message: '',
 }
 
+function normalizePhoneNumber(value: string) {
+  const trimmed = value.trim()
+  const digits = trimmed.replace(/\D/g, '')
+
+  if (!digits) {
+    return ''
+  }
+
+  return trimmed.startsWith('+') ? `+${digits}` : digits
+}
+
+function isValidPhoneNumber(value: string) {
+  return /^\+?\d{7,20}$/.test(value)
+}
+
 export function BookingSection({
   language,
   whatsappPhone,
   whatsappMessage,
 }: BookingSectionProps) {
   const content = getBookingContent(language)
-  const dateFormatHint = language === 'en' ? 'yyyy-mm-dd' : 'дд.мм.гггг'
+  const phonePlaceholder =
+    language === 'en'
+      ? 'For example: +123 456 789 000'
+      : 'Например: +123 456 789 000'
+  const phoneHelper =
+    language === 'en'
+      ? 'Enter your number in international format'
+      : 'Введите номер в международном формате'
+  const phoneRequiredError =
+    language === 'en'
+      ? 'Please enter your phone or WhatsApp number'
+      : 'Укажите телефон или WhatsApp'
+  const phoneInvalidError =
+    language === 'en'
+      ? 'Please check your phone number'
+      : 'Проверьте номер телефона'
   const [form, setForm] = useState<GuestLeadFormState>(emptyGuestLeadForm)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [phoneError, setPhoneError] = useState('')
   const normalizedPhone = whatsappPhone?.replace(/[^\d]/g, '')
   const whatsappUrl = `${normalizedPhone ? `https://wa.me/${normalizedPhone}` : whatsappBaseUrl}?text=${encodeURIComponent(
     whatsappMessage || content.whatsappText
@@ -140,22 +176,48 @@ export function BookingSection({
   const labelClass = 'text-sm font-medium text-[#3E3933]'
 
   function updateField(field: keyof GuestLeadFormState, value: string) {
-    setForm((currentForm) => ({...currentForm, [field]: value}))
+    setForm((currentForm) => {
+      const nextForm = {...currentForm, [field]: value}
+
+      if (
+        field === 'checkinDate' &&
+        nextForm.checkoutDate &&
+        value &&
+        nextForm.checkoutDate < value
+      ) {
+        nextForm.checkoutDate = ''
+      }
+
+      return nextForm
+    })
+
     if (status !== 'idle') {
       setStatus('idle')
+    }
+
+    if (field === 'phone' && phoneError) {
+      setPhoneError('')
     }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!form.phone.trim()) {
-      setStatus('error')
+    const normalizedPhoneValue = normalizePhoneNumber(form.phone)
+
+    if (!normalizedPhoneValue) {
+      setPhoneError(phoneRequiredError)
+      return
+    }
+
+    if (!isValidPhoneNumber(normalizedPhoneValue)) {
+      setPhoneError(phoneInvalidError)
       return
     }
 
     setIsSubmitting(true)
     setStatus('idle')
+    setPhoneError('')
 
     try {
       const response = await fetch('/api/leads/guest', {
@@ -165,7 +227,7 @@ export function BookingSection({
         },
         body: JSON.stringify({
           name: form.name,
-          phone: form.phone,
+          phone: normalizedPhoneValue,
           checkinDate: form.checkinDate,
           checkoutDate: form.checkoutDate,
           guestsCount: form.guestsCount ? Number(form.guestsCount) : undefined,
@@ -180,6 +242,7 @@ export function BookingSection({
 
       setForm(emptyGuestLeadForm)
       setStatus('success')
+      setPhoneError('')
     } catch {
       setStatus('error')
     } finally {
@@ -254,47 +317,58 @@ export function BookingSection({
               <label className={labelClass}>
                 {content.fields.phone}
                 <input
-                  className={inputClass}
+                  className={`${inputClass} ${
+                    phoneError
+                      ? 'border-[#C96D5E] focus:border-[#C96D5E] focus:ring-[#C96D5E]/12'
+                      : ''
+                  }`}
                   type="tel"
                   name="phone"
+                  inputMode="tel"
                   autoComplete="tel"
-                  required
+                  placeholder={phonePlaceholder}
+                  aria-invalid={phoneError ? 'true' : 'false'}
+                  aria-describedby="guest-phone-note guest-phone-error"
                   value={form.phone}
                   onChange={(event) => updateField('phone', event.target.value)}
                 />
+                <span
+                  id="guest-phone-note"
+                  className="mt-2 block text-xs font-normal leading-5 text-[#8A8177]"
+                >
+                  {phoneHelper}
+                </span>
+                <span
+                  id="guest-phone-error"
+                  className={`mt-1 block text-xs font-normal leading-5 ${
+                    phoneError ? 'text-[#B45445]' : 'text-transparent'
+                  }`}
+                  aria-live="polite"
+                >
+                  {phoneError || ' '}
+                </span>
               </label>
 
-              <label className={labelClass}>
-                {content.fields.checkinDate}
-                <span className="mt-1 block text-xs font-normal tracking-[0.02em] text-[#8A8177]">
-                  {dateFormatHint}
-                </span>
-                <input
-                  className={inputClass}
-                  type="date"
-                  name="checkinDate"
-                  value={form.checkinDate}
-                  onChange={(event) =>
-                    updateField('checkinDate', event.target.value)
-                  }
-                />
-              </label>
+              <DateField
+                label={content.fields.checkinDate}
+                language={language}
+                name="checkinDate"
+                value={form.checkinDate}
+                onChange={(value) => updateField('checkinDate', value)}
+                className={inputClass}
+                labelClassName={labelClass}
+              />
 
-              <label className={labelClass}>
-                {content.fields.checkoutDate}
-                <span className="mt-1 block text-xs font-normal tracking-[0.02em] text-[#8A8177]">
-                  {dateFormatHint}
-                </span>
-                <input
-                  className={inputClass}
-                  type="date"
-                  name="checkoutDate"
-                  value={form.checkoutDate}
-                  onChange={(event) =>
-                    updateField('checkoutDate', event.target.value)
-                  }
-                />
-              </label>
+              <DateField
+                label={content.fields.checkoutDate}
+                language={language}
+                name="checkoutDate"
+                value={form.checkoutDate}
+                minValue={form.checkinDate || undefined}
+                onChange={(value) => updateField('checkoutDate', value)}
+                className={inputClass}
+                labelClassName={labelClass}
+              />
 
               <label className={labelClass}>
                 {content.fields.guestsCount}

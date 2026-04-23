@@ -29,6 +29,21 @@ const emptyOwnerLeadForm: OwnerLeadFormState = {
   message: '',
 }
 
+function normalizePhoneNumber(value: string) {
+  const trimmed = value.trim()
+  const digits = trimmed.replace(/\D/g, '')
+
+  if (!digits) {
+    return ''
+  }
+
+  return trimmed.startsWith('+') ? `+${digits}` : digits
+}
+
+function isValidPhoneNumber(value: string) {
+  return /^\+?\d{7,20}$/.test(value)
+}
+
 function getPartnersContent(language: Language) {
   if (language === 'en') {
     return {
@@ -103,9 +118,26 @@ export function PartnersSection({
   whatsappMessage,
 }: PartnersSectionProps) {
   const content = getPartnersContent(language)
+  const phonePlaceholder =
+    language === 'en'
+      ? 'For example: +123 456 789 000'
+      : 'Например: +123 456 789 000'
+  const phoneHelper =
+    language === 'en'
+      ? 'Enter your number in international format'
+      : 'Введите номер в международном формате'
+  const phoneRequiredError =
+    language === 'en'
+      ? 'Please enter your phone or WhatsApp number'
+      : 'Укажите телефон или WhatsApp'
+  const phoneInvalidError =
+    language === 'en'
+      ? 'Please check your phone number'
+      : 'Проверьте номер телефона'
   const [form, setForm] = useState<OwnerLeadFormState>(emptyOwnerLeadForm)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [phoneError, setPhoneError] = useState('')
   const normalizedPhone = whatsappPhone?.replace(/[^\d]/g, '')
   const whatsappUrl = `${normalizedPhone ? `https://wa.me/${normalizedPhone}` : whatsappBaseUrl}?text=${encodeURIComponent(
     whatsappMessage || content.whatsappText
@@ -120,18 +152,30 @@ export function PartnersSection({
     if (status !== 'idle') {
       setStatus('idle')
     }
+
+    if (field === 'phone' && phoneError) {
+      setPhoneError('')
+    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!form.phone.trim()) {
-      setStatus('error')
+    const normalizedPhoneValue = normalizePhoneNumber(form.phone)
+
+    if (!normalizedPhoneValue) {
+      setPhoneError(phoneRequiredError)
+      return
+    }
+
+    if (!isValidPhoneNumber(normalizedPhoneValue)) {
+      setPhoneError(phoneInvalidError)
       return
     }
 
     setIsSubmitting(true)
     setStatus('idle')
+    setPhoneError('')
 
     try {
       const response = await fetch('/api/leads/owner', {
@@ -141,7 +185,7 @@ export function PartnersSection({
         },
         body: JSON.stringify({
           name: form.name,
-          phone: form.phone,
+          phone: normalizedPhoneValue,
           propertyType: form.propertyType,
           complexName: form.complexName,
           message: form.message,
@@ -154,6 +198,7 @@ export function PartnersSection({
 
       setForm(emptyOwnerLeadForm)
       setStatus('success')
+      setPhoneError('')
     } catch {
       setStatus('error')
     } finally {
@@ -230,14 +275,36 @@ export function PartnersSection({
                 <label className={labelClass}>
                   {content.fields.phone}
                   <input
-                    className={inputClass}
+                    className={`${inputClass} ${
+                      phoneError
+                        ? 'border-[#D88676] focus:border-[#D88676] focus:ring-[#D88676]/12'
+                        : ''
+                    }`}
                     type="tel"
                     name="phone"
+                    inputMode="tel"
                     autoComplete="tel"
-                    required
+                    placeholder={phonePlaceholder}
+                    aria-invalid={phoneError ? 'true' : 'false'}
+                    aria-describedby="owner-phone-note owner-phone-error"
                     value={form.phone}
                     onChange={(event) => updateField('phone', event.target.value)}
                   />
+                  <span
+                    id="owner-phone-note"
+                    className="mt-2 block text-xs font-normal leading-5 text-white/56"
+                  >
+                    {phoneHelper}
+                  </span>
+                  <span
+                    id="owner-phone-error"
+                    className={`mt-1 block text-xs font-normal leading-5 ${
+                      phoneError ? 'text-[#F1B0A4]' : 'text-transparent'
+                    }`}
+                    aria-live="polite"
+                  >
+                    {phoneError || ' '}
+                  </span>
                 </label>
 
                 <label className={labelClass}>
