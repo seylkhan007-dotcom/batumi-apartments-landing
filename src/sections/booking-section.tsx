@@ -135,7 +135,7 @@ export function BookingSection({
     whatsappMessage || content.whatsappText
   )}`
   const inputClass =
-    'mt-2 min-h-12 w-full rounded-2xl border border-[#E3D8C9] bg-white px-4 text-sm text-[#1F1F1F] outline-none transition duration-200 placeholder:text-[#A69A8D] focus:border-[#A88A5D] focus:ring-4 focus:ring-[#A88A5D]/10'
+    'mt-2 min-h-11 w-full rounded-2xl border border-[#E3D8C9] bg-white px-4 text-sm text-[#1F1F1F] outline-none transition duration-200 placeholder:text-[#A69A8D] focus:border-[#A88A5D] focus:ring-4 focus:ring-[#A88A5D]/10 sm:min-h-12'
   const labelClass = 'text-sm font-medium text-[#3E3933]'
 
   function updateField(field: keyof GuestLeadFormState, value: string) {
@@ -189,8 +189,8 @@ export function BookingSection({
   return (
     <section className="border-y border-[#E7DED2] bg-[#F6F3EF]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-18">
-        <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-start lg:gap-12">
-          <div className="lg:pt-4">
+        <div className="grid gap-8 lg:grid-cols-[0.96fr_1.04fr] lg:items-start lg:gap-10 xl:gap-12">
+          <div className="lg:max-w-[34rem] lg:pt-6">
             <p className="text-xs uppercase tracking-[0.24em] text-[#A88A5D] sm:text-sm sm:tracking-[0.3em]">
               {content.badge}
             </p>
@@ -201,7 +201,7 @@ export function BookingSection({
               {content.description}
             </p>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row lg:mt-8">
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -223,21 +223,21 @@ export function BookingSection({
 
           <form
             onSubmit={handleSubmit}
-            className="rounded-[28px] border border-[#D8C5A8] bg-white p-5 shadow-[0_24px_60px_rgba(31,31,31,0.11)] sm:p-7"
+            className="rounded-[28px] border border-[#D8C5A8] bg-white p-5 shadow-[0_24px_60px_rgba(31,31,31,0.11)] sm:p-7 lg:mt-1 lg:p-6 xl:p-7"
           >
-            <div className="mb-5 border-b border-[#EFE7DC] pb-5">
+            <div className="mb-5 border-b border-[#EFE7DC] pb-5 lg:mb-4 lg:pb-4">
               <p className="text-xs uppercase tracking-[0.22em] text-[#A88A5D]">
                 {content.badge}
               </p>
               <h3 className="mt-3 text-xl font-semibold text-[#1F1F1F] sm:text-2xl">
                 {content.formTitle}
               </h3>
-              <p className="mt-3 text-sm leading-7 text-[#5C544B]">
+              <p className="mt-3 max-w-xl text-sm leading-7 text-[#5C544B] lg:leading-6">
                 {content.formDescription}
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 lg:gap-x-4 lg:gap-y-3.5">
               <label className={labelClass}>
                 {content.fields.name}
                 <input
@@ -307,7 +307,7 @@ export function BookingSection({
               <label className={`${labelClass} sm:col-span-2`}>
                 {content.fields.message}
                 <textarea
-                  className={`${inputClass} min-h-28 resize-none py-3 leading-6`}
+                  className={`${inputClass} min-h-24 resize-none py-3 leading-6 lg:min-h-24`}
                   name="message"
                   value={form.message}
                   onChange={(event) =>
@@ -316,17 +316,17 @@ export function BookingSection({
                 />
               </label>
 
-              <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-center">
+              <div className="flex flex-col gap-3 pt-1 sm:col-span-2 sm:flex-row sm:items-center lg:gap-4">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-[#A88A5D] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(168,138,93,0.25)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#8F7349] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:w-auto"
+                  className="inline-flex min-h-12 w-full items-center justify-center self-start rounded-full bg-[#A88A5D] px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_34px_rgba(168,138,93,0.25)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#8F7349] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 sm:w-auto"
                 >
                   {isSubmitting ? content.sendingButton : content.submitButton}
                 </button>
 
                 <p
-                  className={`text-sm leading-6 ${
+                  className={`min-h-6 text-sm leading-6 sm:flex-1 sm:pt-0.5 ${
                     status === 'success'
                       ? 'text-[#3F7A4D]'
                       : status === 'error'
